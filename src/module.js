@@ -1,2 +1,2 @@
-global.x=4;
-global.y=5;
+//global.x=4;
+//global.y=5;
