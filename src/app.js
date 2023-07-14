@@ -1,53 +1,57 @@
-//const math=require("./math");
-//import {a} from "./math.js";
+const path=require("path");
 
-const os=require("os");
-const fs=require("fs");
+//console.log( path.normalize("./src") );
+//console.log( path.normalize("./src//img") );
 
-//console.log(os.cpus().length );
-//console.log(os.arch() );
-//console.log(os.freemem()/1024/1024/1024, os.totalmem()/1024/1024/1024  );
-//console.log( os.networkInterfaces() );
-//console.log( os.platform() );
-//console.log( os.type() );
-//console.log( os.uptime()/60/60 );
-//console.log( os.userInfo() );
+//console.log( path.basename('app/src/') );
+//console.log( path.basename('app/src/demo.txt','.txt') );
+//console.log( path.win32.basename("src/app") );
 
-//let data=fs.readFileSync('src/data.txt',{encoding:'utf-8'});
-fs.readFile("src/data.txt",{encoding:"utf-8"},(err,data)=>{
-     if( err){  console.log(err) }
-     else{ console.log(data); }
+//console.log( path.dirname("src/app/demo/") );
+//console.log( path.dirname("src/app/demo.txt") );
+//console.log( path.extname("src/app/demo.txt") );
+
+//console.log( path.resolve(__dirname) );
+//console.log( path.resolve("src/app") );
+//console.log( path.resolve("src","app") );
+//console.log( path.join("src","app") );
+
+
+const event=require("events").EventEmitter;
+const emitter=new event();
+module.exports=emitter;
+
+// register listener or subscribe
+emitter.on("done",(res)=>{
+     console.log(` emitted`);
+     res.handles=true;
+});
+emitter.on("done",(res)=>{
+     if(res.handles==true){console.log(` emit again with ${res.handles}`);}
 });
 
-/* fs.stat("src/data.txt",(err,data)=>{
-     if( err){  console.log(err) }
-     else{
-           //console.log(data.isFile());
-           //console.log(data.isDirectory());
-           console.log(data.size );
-          }
-}); */
-
-/* fs.writeFile("src/data.txt","Hola Amigo",(err,res)=>{
-     if( err){ console.log(err)}
-     else{  console.log(res);}
-}); */
-/* fs.appendFile("src/data.txt","\nHola Amigo",(err,res)=>{
-     if( err){ console.log(err)}
-     else{  console.log(res);}
-});  */
-
-/* fs.unlink("src/data.txt",(err,res)=>{
-     if( err){ console.log(err)}
-     else{  console.log("file deleted");}
-}); */
-
-fs.readFile("src/data.txt",{encoding:"utf-8"},(err,data)=>{
-     if( err){ console.log(err) }
-     else{
-           console.log(data );
-     }
-});
+emitter.once("open",(x)=>{console.log(`open once only`);})
 
 
-console.log("App running");
+function emitOnce(){
+     console.log(`handled`);
+     emitter.removeListener("once",emitOnce);
+}
+emitter.on("once",emitOnce);
+//emitter.on("error",(err)=>{ console.log(err); })
+
+
+// Raise, emit or trigger event
+//emitter.emit("done");
+//emitter.emit("done",2);
+//emitter.emit("done",{id:1});
+//emitter.emit("open");
+//emitter.emit("open");
+//emitter.emit("error");
+
+const login=require("./login");
+const account=require("./account");
+
+
+emitter.emit("login");
+emitter.emit("account");

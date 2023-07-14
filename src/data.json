@@ -1,0 +1,10 @@
+[
+    {"name": "swift", "type": "hatchback", "price":810000},
+    {"name": "dzire", "type": "hatchback", "price":880000},
+    {"name": "ciaz", "type": "sedan", "price":1000000},
+    {"name": "baleno", "type": "hatchback", "price":850000},
+    {"name": "scross", "type": "crossover", "price":1160000},
+    {"name": "brezza", "type": "suv", "price":990000},
+    {"name": "alto", "type": "hatchback", "price":400000},
+    {"name": "gymni", "type": "suv", "price":1300000}
+]
