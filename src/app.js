@@ -1,48 +1,33 @@
-const http=require("http");
-require('dotenv').config();
-const ip='127.0.0.1';
+const express=require("express");
+require("dotenv").config();
+const port=process.env.PORT;
 
-/* http.createServer((req,res)=>{
-    res.write(`Hello World`);
-    res.end();
-}).listen(3030);
- */
+const app=express();
 
-const data=["sun","mon","tues"];
-
-const server=http.createServer((req,res)=>{
-    //res.statusCode=200;
-    //res.setHeader('Content-Type','text/html');
-  /* 
-    res.write(`<h1>`);
-    res.write(process.version);
-    res.write(`</h1>`); 
-    */
-
-   
-
-    if( req.url=="/" && req.method=="GET"){
-        res.writeHead(200,'Content-Type','text/html')
-        res.write(`<h1>${process.version}</h1>`);
-        res.write(` <a href="/">Home</a> `);
-        res.write(` <a href="/api">API</a> `);
-        res.write(`<p>${ "2" + 3 }</p>`);
-        res.write(`<p>${ data.sort() }</p>`);
-        res.write(`<p>${ req.url }</p>`);
-        res.write(`<p>${ req.method }</p>`);
-        res.write(`<p>${ req.headers.host }</p>`);
-        res.end();
-    }
-    else if( req.url=="/api" && req.method=="GET"){
-        return res.end(JSON.stringify([{name:"a",id:1},{name:"b",id:2}]));
-    }
-    else{
-        res.writeHead(404,'Content-Type','text/html')
-        res.write(`<h1>Page not found</h1>`);
-        res.end();
-    }
+app.use((req,res, next)=>{
+    console.log(`Login at ${new Date().toLocaleString()}`);
+    next();
 });
 
-server.listen(process.env.PORT,ip,()=>{
-    console.log(`Server running at http://127.0.0.1:${process.env.PORT}`);
+app.get("/",(req,res)=>{
+    res.setHeader('Content-Type','text/html');
+    res.status(200).send("Homepage");
 });
+
+
+app.get("/app",(req,res)=>{
+    res.setHeader('Content-Type','text/html');
+    res.status(200).send("Hello App");
+});
+
+
+
+/* wild card handler */
+app.get("/**",(req,res)=>{
+    res.setHeader('Content-Type','text/html');
+    res.status(404).send("Page Not Found");
+});
+
+app.listen(port,()=>{
+    console.log(`server running at http://127.0.0.1:${port}`);
+})
