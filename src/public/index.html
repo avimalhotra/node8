@@ -16,9 +16,21 @@
             <a href="about.html">About</a>
         </nav>
         <main class="p-3 bg-warning-subtle">
-            <!-- <img src="img/sm-planners.png" alt="sm planner" width="134"  height="96"> -->
-            <form action="/submit" method="post">
-                <label><input type="text" name="user" required></label>
+           
+            <h2>Get</h2>
+
+            <form action="/search" method="get" autocomplete="off">
+                <label>Search Car: <input type="search" class="form-control" name="car" required></label> 
+                <label><input type="checkbox" name="used" value="yes"> Show used cars</label>
+                <button class="btn btn-primary">Search</button>
+            </form>
+
+            <h2>Post</h2>
+
+            <form action="/send" autocomplete="off" method="post">
+                <label>Username: <input type="text" class="form-control" name="username" required></label> 
+                <label>Password: <input type="password" class="form-control" name="userpass" required></label> 
+                <button class="btn btn-primary">Login</button>
             </form>
         </main>
     </div>
