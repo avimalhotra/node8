@@ -15,6 +15,7 @@ const product=require('./routes/product');
 
 
 /* body parse */
+app.use(bp.text());
 app.use(bp.json());
 app.use(bp.urlencoded({extended:false}));
 
@@ -48,8 +49,8 @@ app.use( (req, res, next)=> {
 
 
 /* express static path */
-//app.use(express.static('src/public'));
-//app.use(express.static('node_modules/bootstrap/dist'));
+app.use(express.static('src/public'));
+app.use(express.static('node_modules/bootstrap/dist'));
 
 /* app.use((req,res, next)=>{
     console.log(`Login at ${new Date().toLocaleString()}`);
@@ -61,11 +62,13 @@ app.use( (req, res, next)=> {
     next();
 }); */
 
+const days=["sun","mon","tues","wed","thurs","fri","sat"]; 
+
 app.get("/",(req,res)=>{
     //res.cookie("pin","201301");
     //res.cookie("pin","201301",{signed:true});
     res.setHeader('Content-Type','text/html');
-    //res.status(200).send("<h1>Home Page</h1>");
+    res.status(200).send("<h1>Home Page</h1>");
     //res.status(200).send(req.url);
     //res.status(200).send(req.query);
     //res.status(200).json({"key":req.query});
@@ -79,8 +82,28 @@ app.get("/",(req,res)=>{
     } */
 
     //res.status(200).send(req.sessionID);
-    res.status(200).send(`Session Id: ${req.sessionID}, Session Views: ${req.session.views['/']}`);
+    //res.status(200).send(`Session Id: ${req.sessionID}, Session Views: ${req.session.views['/']}`);
 });
+
+
+
+app.get("/api",(req,res)=>{
+    //enable CORS 
+    res.header("Access-Control-Allow-Origin","*");
+    return res.status(200).json(days);
+});
+app.post('/search',(req,res)=>{
+    let day=req.body;              // receive data through ajax
+    res.header('Access-Control-Allow-Origin',"*");
+
+    day=(JSON.parse(req.body).query);
+
+    let resp=days.filter(i=>i==day);
+
+    return res.status(200).send(resp);
+
+});
+
 
 app.get("/signout",(req,res)=>{
     res.status(200).send(req.session.destroy());

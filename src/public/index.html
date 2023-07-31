@@ -32,8 +32,38 @@
                 <label>Password: <input type="password" class="form-control" name="userpass" required></label> 
                 <button class="btn btn-primary">Login</button>
             </form>
+            <h2>Fetch</h2>
+
+            <form action="/" method="post" autocomplete="off" name="days">
+                <label>Search Day: <input type="search" class="form-control" name="day" required></label> 
+                <button class="btn btn-primary">Search</button>
+                <span class="e1"></span>
+            </form>
         </main>
     </div>
 <script src="js/bootstrap.bundle.min.js"></script>    
+<script>
+    "use strict";
+
+    fetch("/api").then(i=>i.json()).then(i=>console.log(i));
+
+
+    document.days.addEventListener("submit",function(e){
+        e.preventDefault();
+        const day=this.day.value;
+        
+        fetch("/search",{method:"POST",body:JSON.stringify({query:day})}).then(i=>i.json()).then(i=>{
+            let res="no search result";
+
+            if( i.length!=0){ res=i}
+            
+            document.querySelector(".e1").textContent=res;
+        });
+
+
+    });
+
+
+</script>
 </body>
 </html>
