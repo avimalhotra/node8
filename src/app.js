@@ -5,7 +5,18 @@ const bp=require('body-parser');
 const cp=require("cookie-parser");
 const session=require('express-session');
 const app=express();
+const path=require('path');
 const parseurl=require("parseurl");
+const multer=require("multer");
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'src/public/uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname)) 
+    }
+  })
+const upload=multer({storage:storage});
 
 
 
@@ -85,6 +96,25 @@ app.get("/",(req,res)=>{
     //res.status(200).send(`Session Id: ${req.sessionID}, Session Views: ${req.session.views['/']}`);
 });
 
+
+/* app.post("/upload",upload.single("pic"),(req,res)=>{
+    console.log(req.file);
+    //console.log(req.body.pic);
+    res.status(200).send(req.file);
+}); */
+/* app.post("/upload",upload.array("pic",4),(req,res)=>{
+    res.status(200).send(req.files);
+}); */
+
+const cpUpload=upload.fields([
+    { name: 'pic', maxCount: 1 },
+    { name: 'gallery', maxCount: 4 }
+]);
+
+app.post("/upload",cpUpload,(req,res)=>{
+    //console.log(req.body.username);
+    res.status(200).send("files uploaded");
+});
 
 
 app.get("/api",(req,res)=>{

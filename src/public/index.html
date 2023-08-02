@@ -39,6 +39,13 @@
                 <button class="btn btn-primary">Search</button>
                 <span class="e1"></span>
             </form>
+            <h2>Multipart Form</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <label>Name: <input type="text" required name="username" class="form-control"></label>
+                <label>Pic : <input type="file" class="form-control" name="pic" required accept=".png,.jpg"></label>
+                <label>Gallery : <input multiple type="file" class="form-control" name="gallery" required accept=".png,.jpg"></label>
+                <button class="btn btn-primary">Upload</button>
+            </form>
         </main>
     </div>
 <script src="js/bootstrap.bundle.min.js"></script>    
