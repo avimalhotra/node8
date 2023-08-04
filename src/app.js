@@ -17,6 +17,8 @@ const storage = multer.diskStorage({
     }
   })
 const upload=multer({storage:storage});
+const socket=require('socket.io');
+
 
 
 
@@ -56,7 +58,7 @@ app.use( (req, res, next)=> {
     req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
   
     next()
-  })
+  });
 
 
 /* express static path */
