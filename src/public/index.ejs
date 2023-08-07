@@ -8,16 +8,21 @@
 </head>
 <body>
     <div class="container">
-        <header class="p-3 bg-danger-subtle">
-            <h1>Hello Express</h1>
-        </header>
-        <nav class="p-3 bg-primary-subtle">
-            <a href="/">Index</a>
-            <a href="about.html">About</a>
-        </nav>
+        <%- include('header') %>
+        
+        <%- include('nav') %>
+
+        
         <main class="p-3 bg-warning-subtle">
            
             <h2>Get</h2>
+           
+
+            <ol>
+                <% days.forEach(function(name) { %>
+                    <li><%= name %></li>
+                <% }); %>
+            </ol>
 
             <form action="/search" method="get" autocomplete="off">
                 <label>Search Car: <input type="search" class="form-control" name="car" required></label> 
@@ -47,6 +52,8 @@
                 <button class="btn btn-primary">Upload</button>
             </form>
         </main>
+        
+        <%- include('footer') %>
     </div>
 <script src="js/bootstrap.bundle.min.js"></script>    
 <script>
@@ -67,10 +74,10 @@
             document.querySelector(".e1").textContent=res;
         });
 
-
     });
 
 
+//document.querySelector("h1").append(" EJS");
 </script>
 </body>
 </html>

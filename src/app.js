@@ -18,8 +18,7 @@ const storage = multer.diskStorage({
   })
 const upload=multer({storage:storage});
 const socket=require('socket.io');
-
-
+const ejs=require("ejs");
 
 
 /* routes */
@@ -37,7 +36,7 @@ app.set('trust proxy',1);
 app.use(cp());
 //app.use(cp("secret"));                    // secure cookie
 
-/* expression session */
+/* express session */
 
 app.use(session({
     secret:"session",
@@ -65,15 +64,8 @@ app.use( (req, res, next)=> {
 app.use(express.static('src/public'));
 app.use(express.static('node_modules/bootstrap/dist'));
 
-/* app.use((req,res, next)=>{
-    console.log(`Login at ${new Date().toLocaleString()}`);
-    next();
-}); */
-
-/* app.use('/user',(req,res, next)=>{
-    console.log(`User Login at ${new Date().toLocaleString()}`);
-    next();
-}); */
+app.set('view engine', 'ejs');
+app.set('views', path.resolve("src/public"));
 
 const days=["sun","mon","tues","wed","thurs","fri","sat"]; 
 
@@ -81,7 +73,7 @@ app.get("/",(req,res)=>{
     //res.cookie("pin","201301");
     //res.cookie("pin","201301",{signed:true});
     res.setHeader('Content-Type','text/html');
-    res.status(200).send("<h1>Home Page</h1>");
+    //res.status(200).send("<h1>Home Page</h1>");
     //res.status(200).send(req.url);
     //res.status(200).send(req.query);
     //res.status(200).json({"key":req.query});
@@ -96,7 +88,19 @@ app.get("/",(req,res)=>{
 
     //res.status(200).send(req.sessionID);
     //res.status(200).send(`Session Id: ${req.sessionID}, Session Views: ${req.session.views['/']}`);
+
+    res.status(200).render('index',{ title:"EJS", days: days  });
 });
+
+app.get("/about",(req,res)=>{
+    res.setHeader('Content-Type','text/html');
+    res.status(200).render('about',{ title:"About Us" });
+});
+app.get("/contact",(req,res)=>{
+    res.setHeader('Content-Type','text/html');
+    res.status(200).render('contact',{ title:"Contact Us" });
+})
+
 
 
 /* app.post("/upload",upload.single("pic"),(req,res)=>{
