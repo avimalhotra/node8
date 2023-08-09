@@ -7,6 +7,9 @@ const session=require('express-session');
 const app=express();
 const path=require('path');
 const parseurl=require("parseurl");
+
+const nunjucks=require("nunjucks");
+
 const multer=require("multer");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -17,8 +20,7 @@ const storage = multer.diskStorage({
     }
   })
 const upload=multer({storage:storage});
-const socket=require('socket.io');
-const ejs=require("ejs");
+
 
 
 /* routes */
@@ -34,7 +36,6 @@ app.use(bp.urlencoded({extended:false}));
 /* cookie parse */
 app.set('trust proxy',1);
 app.use(cp());
-//app.use(cp("secret"));                    // secure cookie
 
 /* express session */
 
@@ -64,8 +65,15 @@ app.use( (req, res, next)=> {
 app.use(express.static('src/public'));
 app.use(express.static('node_modules/bootstrap/dist'));
 
-app.set('view engine', 'ejs');
-app.set('views', path.resolve("src/public"));
+
+// configure
+nunjucks.configure(path.resolve('src/public/views'),{
+    express:app,
+    autoscape:true,
+    noCache:false,
+    watch:true
+}); 
+
 
 const days=["sun","mon","tues","wed","thurs","fri","sat"]; 
 
@@ -89,18 +97,16 @@ app.get("/",(req,res)=>{
     //res.status(200).send(req.sessionID);
     //res.status(200).send(`Session Id: ${req.sessionID}, Session Views: ${req.session.views['/']}`);
 
-    res.status(200).render('index',{ title:"EJS", days: days  });
-});
+    res.status(200).render('index.html',{ title:"Nunjucks", data:{name:"aaa", id:22} ,days: days}); });
 
 app.get("/about",(req,res)=>{
     res.setHeader('Content-Type','text/html');
-    res.status(200).render('about',{ title:"About Us" });
+    res.status(200).render('about.html',{ title:"About Us" });
 });
 app.get("/contact",(req,res)=>{
     res.setHeader('Content-Type','text/html');
-    res.status(200).render('contact',{ title:"Contact Us" });
+    res.status(200).render('contact.html',{ title:"Contact Us" });
 })
-
 
 
 /* app.post("/upload",upload.single("pic"),(req,res)=>{

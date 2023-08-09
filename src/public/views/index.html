@@ -3,26 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello Express</title>
+    <title>{{title}}</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
-        <%- include('header') %>
-        
-        <%- include('nav') %>
+       <!-- <h1>{{title}}</h1> -->
+        {% include 'header.html' %}
+        {% include 'nav.html' %}
 
-        
-        <main class="p-3 bg-warning-subtle">
-           
+        <main class="p-3 bg-warning-subtle">  
             <h2>Get</h2>
+
+            {% if name %}
+                {{name}}
+            {% endif %}
+
+            {% set x, y, z = 5 %}
+            <p> x is {{x}}</p>
            
+            <p> Data name is {{data.name}} and id is {{data.id}}</p>
+
+            <p> Name is {{"avinash" | title }}</p>
 
             <ol>
-                <% days.forEach(function(name) { %>
-                    <li><%= name %></li>
-                <% }); %>
+                {% for i in days %}   
+                     <li>{{ i | title }}</li>
+                {% endfor %}    
             </ol>
+            <ol>
+                {% for i,j in data %}   
+                     <li>{{ i }} , {{j}}</li>
+                {% endfor %}    
+            </ol>
+
 
             <form action="/search" method="get" autocomplete="off">
                 <label>Search Car: <input type="search" class="form-control" name="car" required></label> 
@@ -52,8 +66,8 @@
                 <button class="btn btn-primary">Upload</button>
             </form>
         </main>
-        
-        <%- include('footer') %>
+        {%  include('footer.html') %}
+       
     </div>
 <script src="js/bootstrap.bundle.min.js"></script>    
 <script>
