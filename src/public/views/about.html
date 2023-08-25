@@ -13,9 +13,43 @@
         {% include('nav.html') %}
         <main class="p-3 bg-warning-subtle">
             <h2>Main</h2>
+            <table class="table table-bordered table-dark">
+                <tr><th>Name</th><th>Type</th><th>Price</th></tr>
+                {% for i in data %}   
+                    <tr><td>{{i.name}}</td><td>{{i.type}}</td><td>{{i.price}}</td></tr>
+                {% endfor %}    
+            </table>
+            <h2>Fetch </h2>
+            <label class="form-label">Sort By: <select class="form-select">
+                <option>default</option>
+                <option>name</option>
+                <option>type</option>
+                <option>price</option>
+            </select></label>
+            <table class="table table-bordered fetch">
+                <thead>
+                    <tr><th>S No</th> <th>Name</th> <th>Body Type</th> <th>Price</th> </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </main>
         {% include('footer.html') %}
     </div>
     <script src="js/bootstrap.bundle.min.js"></script>  
+    <script>
+
+        function showData(sortBy){
+          fetch("/api").then(i=>i.json()).then(i=>{
+            
+            i.forEach((elem,ind)=>{
+                document.querySelector(".fetch tbody").innerHTML+=`<tr><td>${++ind}</td><td>${elem.name}</td><td>${elem.type}</td><td>${elem.price}</td></tr>`
+            });
+
+          });
+        }
+
+        showData();
+
+    </script>
 </body>
 </html>
