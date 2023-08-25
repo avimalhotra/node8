@@ -27,7 +27,7 @@
             <p> Name is {{"avinash" | title }}</p>
 
             <ol>
-                {% for i in days %}   
+                {% for i in data %}   
                      <li>{{ i | title }}</li>
                 {% endfor %}    
             </ol>
@@ -40,9 +40,23 @@
 
             <form action="/search" method="get" autocomplete="off">
                 <label>Search Car: <input type="search" class="form-control" name="car" required></label> 
-                <label><input type="checkbox" name="used" value="yes"> Show used cars</label>
+                <!-- <label><input type="checkbox" name="used" value="yes"> Show used cars</label> -->
                 <button class="btn btn-primary">Search</button>
             </form>
+
+            <h2>Upload in DB</h2>
+            <form action="/savecar" method="get" autocomplete="off">
+                <label>Car: <input type="text" class="form-control" name="name" required></label> 
+                <label>Type: <input type="text" class="form-control" name="type" list="bodytype" required></label> 
+                <label>Price: <input type="number" min="1" class="form-control" name="price" required></label> 
+                <button class="btn btn-primary">Save</button>
+            </form>
+            <datalist id="bodytype">
+                <option>hatchback</option>
+                <option>suv</option>
+                <option>sedan</option>
+                <option>crossover</option>
+            </datalist>
 
             <h2>Post</h2>
 
@@ -73,7 +87,7 @@
 <script>
     "use strict";
 
-    fetch("/api").then(i=>i.json()).then(i=>console.log(i));
+    fetch("/api").then(i=>i.json()).then(i=>console.table(i));
 
 
     document.days.addEventListener("submit",function(e){

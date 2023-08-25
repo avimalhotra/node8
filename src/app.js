@@ -10,6 +10,9 @@ const parseurl=require("parseurl");
 
 const nunjucks=require("nunjucks");
 
+const cars=require("./models/cars");
+const user=require("./models/user");
+
 const multer=require("multer");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -26,6 +29,7 @@ const upload=multer({storage:storage});
 /* routes */
 const admin=require('./routes/admin');
 const product=require('./routes/product');
+const { default: mongoose } = require("mongoose");
 
 
 /* body parse */
@@ -101,7 +105,10 @@ app.get("/",(req,res)=>{
 
 app.get("/about",(req,res)=>{
     res.setHeader('Content-Type','text/html');
-    res.status(200).render('about.html',{ title:"About Us" });
+    cars.find({},{_id:0,__v:0}).then(i=>{
+        res.status(200).render('about.html',{ title:"About Us" , data:i });
+    });
+    
 });
 app.get("/contact",(req,res)=>{
     res.setHeader('Content-Type','text/html');
@@ -132,8 +139,11 @@ app.post("/upload",cpUpload,(req,res)=>{
 app.get("/api",(req,res)=>{
     //enable CORS 
     res.header("Access-Control-Allow-Origin","*");
-    return res.status(200).json(days);
+    cars.find({},{_id:0,__v:0}).then(i=>{
+        return res.status(200).json(i);
+    });
 });
+
 app.post('/search',(req,res)=>{
     let day=req.body;              // receive data through ajax
     res.header('Access-Control-Allow-Origin',"*");
@@ -143,6 +153,20 @@ app.post('/search',(req,res)=>{
     let resp=days.filter(i=>i==day);
 
     return res.status(200).send(resp);
+
+});
+
+app.get("/savecar",(req,res)=>{
+    let name=req.query.name, type=req.query.type, price=req.query.price;
+
+    const car =new cars({
+        _id:new mongoose.Types.ObjectId(),
+        name:name,
+        type:type,
+        price:price
+    });
+
+    car.save().then(i=>res.status(200).send("data saved")).catch(i=>res.status(200).send("data not saved"));
 
 });
 
@@ -161,8 +185,19 @@ app.get("/readcookie",(req,res)=>{
 
 
 app.get("/search",(req,res)=>{
-    const q=req.query;
-    res.status(200).send(q);
+    const car=req.query.car;
+
+    cars.find({name:car},{_id:0,__v:0}).then(i=>{
+        
+        if( i.length==0){
+            res.status(200).send("no car found");
+        }
+        else{
+            res.status(200).send(i);
+        }
+         
+    });
+    
 });
 
 app.post("/send",(req,res)=>{
