@@ -14,6 +14,11 @@
         
         <main class="p-3 bg-warning-subtle">
             <h2>Contact</h2>
+            <form action="/send" method="post">
+                <label class="form-label">Name: <input type="text" required class="form-control" name="username"></label>
+                <label class="form-label">Password: <input type="password" required class="form-control" name="password"></label>
+                <button class="btn btn-primary">Login</button>
+            </form>
         </main>
 
         {%- include('footer.html') %}

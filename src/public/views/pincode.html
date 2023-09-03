@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        {% include('header.html') %}
+        
+        {% include('nav.html') %}
+        
+        <main class="p-3 bg-warning-subtle">
+            <h2>Check Pincode</h2>
+            <form action="/searchpin" method="get" name="pincode">
+                <label class="form-label">Pincode: <input type="search" required class="form-control" name="pin" pattern="[\d]{6}"></label>
+                <button class="btn btn-primary">Search</button> <span class="err text-danger"></span>
+            </form>
+            <table class="table table-bordered">
+                <thead><tr><th>S No</th><th>Name</th><th>Taluk</th><th>District</th><th>State</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </main>
+
+        {%- include('footer.html') %}
+    </div>
+    <script src="js/bootstrap.bundle.min.js"></script>  
+    <script>
+        document.pincode.addEventListener("submit",function(e){
+            e.preventDefault();
+
+            const pin=this.pin.value;
+
+            fetch(`/searchpin?pin=${pin}`).then(i=>i.json()).then(i=>{
+               
+                if( i[0].message=="no pincode found" ){
+                    document.querySelector(".err").textContent=i[0].message
+                 }
+                else{
+                    i.forEach((elem,ind)=>{
+                        document.querySelector(".table tbody").innerHTML+=`<tr><td>${++ind}</td><td>${elem.officeName}</td><td>${elem.taluk}</td><td>${elem.districtName}</td><td>${elem.stateName}</td></tr>`
+                    })
+                }
+            });
+
+
+
+
+        });
+    </script>
+</body>
+</html>

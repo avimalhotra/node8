@@ -12,6 +12,7 @@ const nunjucks=require("nunjucks");
 
 const cars=require("./models/cars");
 const user=require("./models/user");
+const pin=require("./models/pincode");
 
 const multer=require("multer");
 const storage = multer.diskStorage({
@@ -114,6 +115,28 @@ app.get("/contact",(req,res)=>{
     res.setHeader('Content-Type','text/html');
     res.status(200).render('contact.html',{ title:"Contact Us" });
 })
+app.get("/pincode",(req,res)=>{
+    res.setHeader('Content-Type','text/html');
+    res.status(200).render('pincode.html',{ title:"Search Pincode" });
+})
+
+app.get("/searchpin",(req,res)=>{
+    
+    //enable CORS 
+    
+    //res.header("Access-Control-Allow-Origin","*");
+    
+    pin.find({pincode:req.query.pin},{_id:0,__v:0}).then(i=>{
+        
+        if( i.length==0){
+            return res.status(200).json([{message:"no pincode found"}]);
+        }
+        else{
+            return res.status(200).json(i);
+        }
+    });
+
+});
 
 
 /* app.post("/upload",upload.single("pic"),(req,res)=>{
@@ -202,17 +225,28 @@ app.get("/search",(req,res)=>{
 
 app.post("/send",(req,res)=>{
     const name=req.body.username;
-    const pass=req.body.userpass;
+    const pass=req.body.password;
+    
 
-    console.log( name, pass );
+    user.find({username:name}).then(i=>{
+        //res.status(200).send(i);
+        if( i.length==0 ){ 
+            res.status(200).send("no user found")
+        }
+        else if(name==i[0].username && pass==i[0].password){
+            res.status(200).send(`hello ${ i[0].username }`);
+        }
+        else{
+            res.status(200).send(`invalid password`);
+        }
+    });
 
-    if( name=="admin" && pass==123456 ){
+   /*  if( name=="admin" && pass==123456 ){
         res.status(200).send(`username is ${name}`);
-        //res.status(200).redirect("about.html")
     }
     else{
         res.status(200).send(`invalid username`);
-    }
+    } */
     
 });
 
