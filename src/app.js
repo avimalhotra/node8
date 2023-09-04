@@ -14,6 +14,8 @@ const cars=require("./models/cars");
 const user=require("./models/user");
 const pin=require("./models/pincode");
 
+
+
 const multer=require("multer");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -50,22 +52,6 @@ app.use(session({
     saveUninitialized:true,
     cookie:{secure:false,maxAge:60000}
 }));
-
-app.use( (req, res, next)=> {
-    if (!req.session.views) {
-      req.session.views = {}
-    }
-  
-    // get the url pathname
-    const pathname = parseurl(req).pathname
-  
-    // count the views
-    req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
-  
-    next()
-  });
-
-
 /* express static path */
 app.use(express.static('src/public'));
 app.use(express.static('node_modules/bootstrap/dist'));
@@ -78,6 +64,115 @@ nunjucks.configure(path.resolve('src/public/views'),{
     noCache:false,
     watch:true
 }); 
+
+/* passport */
+const passport=require("passport");
+const LocalStrategy = require('passport-local').Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
+  });
+passport.deserializeUser(function (user, next) {
+    next(null, user);
+});
+
+passport.use('local', new LocalStrategy((username, password, done) => {
+    
+    user.find({ username: username }).then(user=>{
+      if( user.length==0 ){
+          return done(null, null, { message: 'No user found!' });
+      }
+      else  if (user[0].password !== password) {
+          return done(null, null, { message: 'Password is incorrect!' });
+      }
+      else{
+          return done(null, user, null);
+      }
+      })
+  }
+));
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      next();
+    } else {
+      res.status(403).send('Forbidden');
+    }
+}
+
+app.get("/login",(req,res)=>{
+    res.status(200).render("login.html",{title:"Login"})
+});
+app.post("/login",(req,res)=>{
+    passport.authenticate('local',  (err, user, info) =>{
+        if (err) {
+          res.render('login.html', { error: err });
+        } 
+        else if (!user) {
+          res.render('login.html', { errorMessage: info.message });
+        } 
+        else {
+          //setting users in session
+          req.logIn(user, function (err) {
+            if (err) {
+              res.render('login.html', { error: err });
+            } else {
+              res.render('admin-login.html',{ name:user[0].username, title:123});
+             }
+          })
+        }
+      })(req, res);
+});
+app.get('/adminlogin', isAuthenticated, (req, res) => { res.render('admin-login.html',{title:"admin"}) });
+
+app.get('/logout', (req, res, next) => { 
+
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/');
+      });
+
+    /* if (req.session) {
+        req.session.destroy((err)=> {
+          if(err) {
+            return next(err);
+          } else {
+              res.clearCookie('connect.sid');
+              req.logout(function(err) {
+                if (err) { return next(err); }
+                //if (!req.user) { res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');}
+               res.redirect('login.html',{ msg:"Logout Successfully"});
+              });
+              if (!req.user) { 
+                  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+              }
+              //res.render('login.html',{ msg:"Logout Successfully"});
+          }
+        });
+      } */
+});
+
+
+
+
+/* app.use( (req, res, next)=> {
+    if (!req.session.views) {
+      req.session.views = {}
+    }
+    // get the url pathname
+    const pathname = parseurl(req).pathname
+  
+    // count the views
+    req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
+  
+    next()
+  }); */
+
+
+
 
 
 const days=["sun","mon","tues","wed","thurs","fri","sat"]; 
@@ -194,17 +289,17 @@ app.get("/savecar",(req,res)=>{
 });
 
 
-app.get("/signout",(req,res)=>{
+/* app.get("/signout",(req,res)=>{
     res.status(200).send(req.session.destroy());
-});
+}); */
 
-app.get("/addcookie",(req,res)=>{
+/* app.get("/addcookie",(req,res)=>{
     res.cookie("id","200",{maxAge:300000});
     res.status(200).send("cookie saved");
 });
 app.get("/readcookie",(req,res)=>{
     res.status(200).send(req.cookies);
-});
+}); */
 
 
 app.get("/search",(req,res)=>{
@@ -226,7 +321,6 @@ app.get("/search",(req,res)=>{
 app.post("/send",(req,res)=>{
     const name=req.body.username;
     const pass=req.body.password;
-    
 
     user.find({username:name}).then(i=>{
         //res.status(200).send(i);
